@@ -28,80 +28,32 @@ try:
 except:
     print("Error during authentication")
 
-# get current percentage
+# # get current percentage
 data = pd.read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv', parse_dates=['date'])
 
-data_filtered = data[data.location == 'World']
+data_filtered = data[data.location == 'India']
 data_filtered = data_filtered[data_filtered.date == data_filtered.date.max()]
+# print(data_filtered.to_json())
 
 # take last item in case dataset contains multiple items this day:
-percentage = data_filtered.iloc[-1].people_vaccinated_per_hundred
-
-# cycle world emojis each day:
-world_today = "🌎🌏🌍"[datetime.datetime.now().timetuple().tm_yday % 3]
-
-bar = tqdm(initial=percentage, total=100., bar_format='|{bar:12}| {percentage:3.1f}% ' + world_today, ascii=False)
-
-bar_string = bar.__str__()
-print("bar_string:\n", bar_string)
-bar.close()
-tweet_string = bar_string[:-7].replace(' ', '\u3000') + bar_string[-7:] + '\n'
-
-# add continent bars
-
-def continent_from_iso_country_code(alpha3_country_code):
-    alpha2_country_code = pc.country_alpha3_to_country_alpha2(alpha3_country_code)
-    continent_code = pc.country_alpha2_to_continent_code(alpha2_country_code)
-    return pc.convert_continent_code_to_continent_name(continent_code)
+one_dose_percentage = data_filtered.iloc[-1].people_vaccinated_per_hundred
+full_dose_percentage = data_filtered.iloc[-1].people_fully_vaccinated_per_hundred
 
 
-data_filtered = data[data.location != 'World']
-data_filtered = data_filtered.dropna(subset=['iso_code', 'people_vaccinated'])
-data_filtered = data_filtered.loc[data_filtered.groupby('iso_code').date.idxmax()]
-data_filtered = data_filtered.set_index('iso_code')
+one_dose_bar = tqdm(initial=one_dose_percentage, total=100., bar_format='|{bar:12}| {percentage:3.1f}% ', ascii=False)
+full_dose_bar = tqdm(initial=full_dose_percentage, total=100., bar_format='|{bar:12}| {percentage:3.1f}% ', ascii=False)
 
-continent_totals = defaultdict(int)
+one_dose_bar_string = one_dose_bar.__str__()
 
-for iso_code, number in data_filtered.people_vaccinated.iteritems():
-    try:
-        continent = continent_from_iso_country_code(iso_code)
-        continent_totals[continent] += number
-    except KeyError:
-        print("iso code", iso_code, "not a valid country code, skipping")
+full_dose_bar_string = full_dose_bar.__str__()
 
+one_dose_bar.close()
+full_dose_bar.close()
+tweet_string = "1st dose/100: " + one_dose_bar_string[:-7].replace(' ', '\u3000') + one_dose_bar_string[-7:] + '\n' + "2nd dose/100: " + full_dose_bar_string[:-7].replace(' ', '\u3000') + full_dose_bar_string[-7:]
+# print(tweet_string)
 
-total_pop = pd.read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/scripts/input/un/population_2020.csv')
-
-# recalculate; the totals for continents are already in total_pop, but we put
-# each contry in one continent, whereas the total_pop continent numbers probably
-# take into account that some contries span multiple continents.
-total_pop_continents = defaultdict(int)
-for index, row in total_pop.iterrows():
-    try:
-        continent = continent_from_iso_country_code(row.iso_code)
-        total_pop_continents[continent] += row.population
-    except:
-        continue
-
-continent_percentages = {}
-strings = {}
-for continent, total in continent_totals.items():
-    continent_percentages[continent] = total / total_pop_continents[continent] * 100
-
-    bar = tqdm(initial=continent_percentages[continent],
-               total=100., bar_format='|{bar:12}| {percentage:3.1f}% C',
-               ascii=False)
-    bar_string = bar.__str__()
-    bar.close()
-    tweet_string_add = bar_string[:-7].replace(' ', '\u3000') + bar_string[-7:]
-    short_continent = continent.replace('orth', '.').replace('outh', '.')
-    tweet_string_add = tweet_string_add.replace('C', short_continent)
-    strings[continent] = tweet_string_add
-    tweet_string = tweet_string + "\n" + tweet_string_add
-
-
-print("final string:")
-print(tweet_string)
+# print("final string:")
+# print(tweet_string)
 print("tweet length:", len(tweet_string))
 
 # and update on twitter
