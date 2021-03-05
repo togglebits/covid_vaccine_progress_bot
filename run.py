@@ -5,7 +5,6 @@ import configargparse as cap
 import tweepy
 from tqdm import tqdm
 import pandas as pd
-import pycountry_convert as pc
 
 argparser = cap.ArgParser(default_config_files=['keys.yml'])
 argparser.add('-c', is_config_file=True, help='config file path')
