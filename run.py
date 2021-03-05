@@ -40,8 +40,8 @@ one_dose_percentage = data_filtered.iloc[-1].people_vaccinated_per_hundred
 full_dose_percentage = data_filtered.iloc[-1].people_fully_vaccinated_per_hundred
 
 
-one_dose_bar = tqdm(initial=one_dose_percentage, total=100., bar_format='|{bar:12}| {percentage:3.1f}% ', ascii=False)
-full_dose_bar = tqdm(initial=full_dose_percentage, total=100., bar_format='|{bar:12}| {percentage:3.1f}% ', ascii=False)
+one_dose_bar = tqdm(initial=one_dose_percentage, total=100., bar_format='|{bar:12}| {percentage:3.2f}% ', ascii=False)
+full_dose_bar = tqdm(initial=full_dose_percentage, total=100., bar_format='|{bar:12}| {percentage:3.2f}% ', ascii=False)
 
 one_dose_bar_string = one_dose_bar.__str__()
 
@@ -49,11 +49,10 @@ full_dose_bar_string = full_dose_bar.__str__()
 
 one_dose_bar.close()
 full_dose_bar.close()
-tweet_string = "1st dose/100: " + one_dose_bar_string[:-7].replace(' ', '\u3000') + one_dose_bar_string[-7:] + '\n' + "2nd dose/100: " + full_dose_bar_string[:-7].replace(' ', '\u3000') + full_dose_bar_string[-7:]
-# print(tweet_string)
+tweet_string = "1st dose/100: " + one_dose_bar_string[:-7].replace(' ', '\u3000') + one_dose_bar_string[-7:] + '\n' + "2nd dose/100: " + full_dose_bar_string[:-7].replace(' ', '\u3000') + full_dose_bar_string[-7:] + '\n'
 
-# print("final string:")
-# print(tweet_string)
+print("final string:")
+print(tweet_string)
 print("tweet length:", len(tweet_string))
 
 # and update on twitter
