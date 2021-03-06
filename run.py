@@ -27,10 +27,20 @@ try:
 except:
     print("Error during authentication")
 
-# # get current percentage
-data = pd.read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv', parse_dates=['date'])
+vaccine_data = pd.read_csv(
+    "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/locations.csv",
+    usecols=["location", "vaccines", "iso_code"],
+    index_col=False,
+)
+vaccines_india = vaccine_data[vaccine_data.location == "India"].iloc[0]["vaccines"]
 
-data_filtered = data[data.location == 'India']
+# get current percentage
+data = pd.read_csv(
+    "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv",
+    parse_dates=["date"],
+)
+
+data_filtered = data[data.location == "India"]
 data_filtered = data_filtered[data_filtered.date == data_filtered.date.max()]
 # print(data_filtered.to_json())
 
@@ -39,16 +49,41 @@ one_dose_percentage = data_filtered.iloc[-1].people_vaccinated_per_hundred
 full_dose_percentage = data_filtered.iloc[-1].people_fully_vaccinated_per_hundred
 
 
-one_dose_bar = tqdm(initial=one_dose_percentage, total=100., bar_format='|{bar:12}| {percentage:3.2f}% ', ascii=False)
-full_dose_bar = tqdm(initial=full_dose_percentage, total=100., bar_format='|{bar:12}| {percentage:3.2f}% ', ascii=False)
+one_dose_bar = tqdm(
+    initial=one_dose_percentage,
+    total=100.0,
+    bar_format="[{bar:12}] {percentage:3.2f}% ",
+    ascii=False,
+)
+full_dose_bar = tqdm(
+    initial=full_dose_percentage,
+    total=100.0,
+    bar_format="[{bar:12}] {percentage:3.2f}% ",
+    ascii=False,
+)
 
-one_dose_bar_string = one_dose_bar.__str__()
-
-full_dose_bar_string = full_dose_bar.__str__()
+one_dose_bar_string = str(one_dose_bar)
+full_dose_bar_string = str(full_dose_bar)
 
 one_dose_bar.close()
 full_dose_bar.close()
-tweet_string = "1st dose/100: " + one_dose_bar_string[:-7].replace(' ', '\u3000') + one_dose_bar_string[-7:] + '\n' + "2nd dose/100: " + full_dose_bar_string[:-7].replace(' ', '\u3000') + full_dose_bar_string[-7:] + '\n'
+tweet_string = (
+    "1st dose: "
+    + one_dose_bar_string[:-7].replace(" ", "\u3000")
+    + one_dose_bar_string[-7:]
+    + "\n2nd dose: "
+    + full_dose_bar_string[:-7].replace(" ", "\u3000")
+    + full_dose_bar_string[-7:]
+    + "\nVaccines: "
+    + vaccines_india
+    + "\nVaccinations today: "
+    + str(int(data_filtered.iloc[-1].daily_vaccinations_raw))
+    + "\nTotal(1st dose:"
+    + str(int(data_filtered.iloc[-1].people_vaccinated))
+    + ", 2nd dose:"
+    + str(int(data_filtered.iloc[-1].people_fully_vaccinated))
+    + ")"
+)
 
 print("final string:")
 print(tweet_string)
