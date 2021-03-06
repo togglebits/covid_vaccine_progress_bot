@@ -5,6 +5,7 @@ import configargparse as cap
 import tweepy
 from tqdm import tqdm
 import pandas as pd
+from numpy import timedelta64
 
 argparser = cap.ArgParser(default_config_files=['keys.yml'])
 argparser.add('-c', is_config_file=True, help='config file path')
@@ -41,13 +42,12 @@ data = pd.read_csv(
 )
 
 data_filtered = data[data.location == "India"]
-data_filtered = data_filtered[data_filtered.date == data_filtered.date.max()]
-# print(data_filtered.to_json())
+data_present_day = data_filtered[data_filtered.date == data_filtered.date.max()]
+data_previous_day = data_filtered[data_filtered.date == (data_filtered.date.max() - timedelta64(1, 'D'))]
 
 # take last item in case dataset contains multiple items this day:
-one_dose_percentage = data_filtered.iloc[-1].people_vaccinated_per_hundred
-full_dose_percentage = data_filtered.iloc[-1].people_fully_vaccinated_per_hundred
-
+one_dose_percentage = data_present_day.iloc[-1].people_vaccinated_per_hundred
+full_dose_percentage = data_present_day.iloc[-1].people_fully_vaccinated_per_hundred
 
 one_dose_bar = tqdm(
     initial=one_dose_percentage,
@@ -77,14 +77,20 @@ tweet_string = (
     + "\nVaccines: "
     + vaccines_india
     + "\nTotal 1st dose: "
-    + str(int(data_filtered.iloc[-1].people_vaccinated))
+    + str(int(data_present_day.iloc[-1].people_vaccinated))
+    + " (+"
+    + str(int(data_present_day.iloc[-1].people_vaccinated - data_previous_day.iloc[-1].people_vaccinated))
+    + ")"
     + "\nTotal 2nd dose: "
-    + str(int(data_filtered.iloc[-1].people_fully_vaccinated))
+    + str(int(data_present_day.iloc[-1].people_fully_vaccinated))
+    + " (+"
+    + str(int(data_present_day.iloc[-1].people_fully_vaccinated - data_previous_day.iloc[-1].people_fully_vaccinated))
+    + ")"
 )
 
 print("final string:")
 print(tweet_string)
 print("tweet length:", len(tweet_string))
 
-# and update on twitter
+# Update on twitter
 api.update_status(tweet_string)
