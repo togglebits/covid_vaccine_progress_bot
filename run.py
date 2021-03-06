@@ -76,13 +76,10 @@ tweet_string = (
     + full_dose_bar_string[-7:]
     + "\nVaccines: "
     + vaccines_india
-    + "\nVaccinations today: "
-    + str(int(data_filtered.iloc[-1].daily_vaccinations_raw))
-    + "\nTotal(1st dose:"
+    + "\nTotal 1st dose: "
     + str(int(data_filtered.iloc[-1].people_vaccinated))
-    + ", 2nd dose:"
+    + "\nTotal 2nd dose: "
     + str(int(data_filtered.iloc[-1].people_fully_vaccinated))
-    + ")"
 )
 
 print("final string:")
