@@ -27,7 +27,7 @@ jobs:
 #         run: python run.py
       - name: run script
         working-directory: state_data/
-        run: python state_data/state_vaccinations.py
+        run: python state_vaccinations.py
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           # Optional but recommended
