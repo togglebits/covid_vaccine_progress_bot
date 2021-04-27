@@ -18,9 +18,6 @@ jobs:
           python-version: '3.9.1'
       - name: install dependencies
         run: pip install -r requirements.txt
-      - name: run state data collector
-        working-directory: ./state_data
-        run: python state_vaccinations.py
       - name: run script
         env:
           BOT_API: ${{ secrets.BOT_API }}
