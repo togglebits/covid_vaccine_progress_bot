@@ -43,11 +43,11 @@ jobs:
           # See the `pathspec`-documentation for git
           # - https://git-scm.com/docs/git-add#Documentation/git-add.txt-ltpathspecgt82308203
           # - https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
-          file_pattern: state_data/*.csv
+          file_pattern: \*.csv
 
           # Optional local file path to the repository
           # Defaults to the root of the repository
-          repository: state_data
+          # repository: state_data
 
           # Optional commit user and author settings
           commit_user_name: vaccinations-update-bot # defaults to "GitHub Actions"
