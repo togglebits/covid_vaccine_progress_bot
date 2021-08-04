@@ -67,26 +67,42 @@ full_dose_bar_string = str(full_dose_bar)
 
 one_dose_bar.close()
 full_dose_bar.close()
-tweet_string = (
-    "1st dose: "
-    + one_dose_bar_string[:-7].replace(" ", "\u3000")
-    + one_dose_bar_string[-7:]
-    + "\n2nd dose: "
-    + full_dose_bar_string[:-7].replace(" ", "\u3000")
-    + full_dose_bar_string[-7:]
-    + "\nVaccines: "
-    + vaccines_india
-    + "\nTotal 1st dose: "
-    + str(int(data_present_day.iloc[-1].people_vaccinated))
-    + " (+"
-    + str(int(data_present_day.iloc[-1].people_vaccinated - data_previous_day.iloc[-1].people_vaccinated))
-    + ")"
-    + "\nTotal 2nd dose: "
-    + str(int(data_present_day.iloc[-1].people_fully_vaccinated))
-    + " (+"
-    + str(int(data_present_day.iloc[-1].people_fully_vaccinated - data_previous_day.iloc[-1].people_fully_vaccinated))
-    + ")"
-)
+try:
+    tweet_string = (
+        "1st dose: "
+        + one_dose_bar_string[:-7].replace(" ", "\u3000")
+        + one_dose_bar_string[-7:]
+        + "\n2nd dose: "
+        + full_dose_bar_string[:-7].replace(" ", "\u3000")
+        + full_dose_bar_string[-7:]
+        + "\nVaccines: "
+        + vaccines_india
+        + "\nTotal 1st dose: "
+        + str(int(data_present_day.iloc[-1].people_vaccinated))
+        + " (+"
+        + str(int(data_present_day.iloc[-1].people_vaccinated - data_previous_day.iloc[-1].people_vaccinated))
+        + ")"
+        + "\nTotal 2nd dose: "
+        + str(int(data_present_day.iloc[-1].people_fully_vaccinated))
+        + " (+"
+        + str(int(data_present_day.iloc[-1].people_fully_vaccinated - data_previous_day.iloc[-1].people_fully_vaccinated))
+        + ")"
+    )
+except ValueError:
+    tweet_string = (
+        "1st dose: "
+        + one_dose_bar_string[:-7].replace(" ", "\u3000")
+        + one_dose_bar_string[-7:]
+        + "\n2nd dose: "
+        + full_dose_bar_string[:-7].replace(" ", "\u3000")
+        + full_dose_bar_string[-7:]
+        + "\nVaccines: "
+        + vaccines_india
+        + "\nTotal 1st dose: "
+        + str(int(data_present_day.iloc[-1].people_vaccinated))
+        + "\nTotal 2nd dose: "
+        + str(int(data_present_day.iloc[-1].people_fully_vaccinated))
+    )
 
 print("final string:")
 print(tweet_string)
