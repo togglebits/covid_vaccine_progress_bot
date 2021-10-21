@@ -25,9 +25,9 @@ jobs:
           BOT_ACCESS: ${{ secrets.BOT_ACCESS }}
           BOT_ACCESS_SECRET: ${{ secrets.BOT_ACCESS_SECRET }}
         run: python run.py
-      - name: run state vaccinations script
-        working-directory: state_data/
-        run: python state_vaccinations.py
+#       - name: run state vaccinations script
+#         working-directory: state_data/
+#         run: python state_vaccinations.py
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Vaccinations update
